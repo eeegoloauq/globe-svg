@@ -1,6 +1,7 @@
-# Publishes to npm on tag push (v*). Requires the NPM_TOKEN repository secret
-# (npmjs.com -> Access Tokens -> Automation). Provenance links the package to
-# this workflow run.
+# Publishes to npm on tag push (v*) via OIDC trusted publishing — no token
+# secrets. Requires the Trusted Publisher config on npmjs.com (package
+# Settings): repo eeegoloauq/globe-svg, workflow publish.yml. Provenance is
+# implied by trusted publishing.
 name: Publish
 
 on:
@@ -21,8 +22,7 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
           cache: npm
+      - run: npm install -g npm@latest # OIDC needs npm >= 11.5
       - run: npm ci
       - run: npm test
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm publish --access public
