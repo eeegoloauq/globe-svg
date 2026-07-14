@@ -84,7 +84,7 @@ care about the framing.
 | `graticule` | `true` | Draw the 10° meridian/parallel grid |
 | `colors` | dark theme | `disc: [inner, outer]`, `graticule`, `land`, `borders`, `rim` |
 | `regions` | `null` | See below |
-| `sources` | built-ins | Override backdrop datasets: `{ "land": …, "countries": … }` (path or URL) |
+| `sources` | built-in | Override the backdrop dataset: `{ "backdrop": … }` (path or URL to an admin-0-like GeoJSON FeatureCollection) |
 | `output` | `.` / `globe.svg` / `globe-regions.json` | `dir` is relative to the config file |
 
 ### Regions
@@ -111,12 +111,15 @@ is an error.
 
 ## Data & caching
 
-Geometry comes from [Natural Earth](https://www.naturalearthdata.com/) (public domain)
-at 1:50m scale, partly via the [world-atlas](https://github.com/topojson/world-atlas)
-TopoJSON redistribution. Files download on first run into `~/.cache/globe-svg`
-(override with `GLOBE_SVG_CACHE`) and are reused afterwards, so CI needs network only
-once per cache lifetime. Everything uses the same 1:50m scale so backdrop and region
-coastlines match.
+All geometry comes from [Natural Earth](https://www.naturalearthdata.com/)
+(public domain) at 1:50m scale, **pinned to release v5.1.2** for reproducible
+output. Land and country borders are both derived from the single admin-0
+dataset (land is the union of all countries), so the backdrop layers align
+exactly by construction, and the region layer shares the same scale and version.
+
+Files download on first run into `~/.cache/globe-svg` (override with
+`GLOBE_SVG_CACHE`) and are reused afterwards, so CI needs network only once per
+cache lifetime.
 
 Disputed territories are rendered exactly as Natural Earth ships them (de-facto
 policy). If you need different boundaries, point `regions.source` / `sources` at your

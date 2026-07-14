@@ -5,16 +5,14 @@ import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import path from 'node:path'
 
-// All built-ins are Natural Earth 1:50m (public domain) or world-atlas
-// (its TopoJSON redistribution). Same scale everywhere, so coastlines of the
-// backdrop and of the region layer match vertex-for-vertex.
+// Single data source: Natural Earth 1:50m (public domain), pinned to a release
+// tag for reproducible output. One scale, one version — the backdrop and the
+// region layer are derived from the same geometry family, so coastlines match.
+const NE = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson'
+
 export const BUILTIN = {
-  land: 'https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json',
-  countries: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json',
-  'ne-admin0-50m':
-    'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson',
-  'ne-admin1-50m':
-    'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_1_states_provinces.geojson',
+  'ne-admin0-50m': `${NE}/ne_50m_admin_0_countries.geojson`,
+  'ne-admin1-50m': `${NE}/ne_50m_admin_1_states_provinces.geojson`,
 }
 
 // Default feature property holding the region code, per built-in source.
