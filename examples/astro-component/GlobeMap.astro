@@ -1,0 +1,154 @@
+---
+/**
+ * Reference Astro component for globe-svg output. Copy into your project and adapt.
+ *
+ * Layers (same projection, same viewBox — they overlay pixel-perfectly):
+ *  - globe.svg          rendered as <img>: one cacheable request for the whole site
+ *  - globe-regions.json inlined as an <svg> overlay: real hit-targets, CSS-stylable
+ *
+ * Interactivity is ~30 lines of vanilla JS below: region <path> and its button
+ * stay in sync on hover, clicking either selects the region.
+ */
+import globeUrl from './globe.svg?url'
+import layer from './globe-regions.json'
+
+interface Region {
+  id: string
+  label: string
+  description?: string
+}
+
+interface Props {
+  regions: Region[] // ids must match regions[].id in globe-regions.json
+}
+
+const { regions } = Astro.props
+const paths = new Map(layer.regions.map((r) => [r.id, r.d]))
+const defaultRegion = regions[0]?.id
+---
+
+<div class="globe-map" data-globe-map>
+  <div class="globe">
+    <img src={globeUrl} alt="" aria-hidden="true" loading="lazy" width="1000" height="1000" />
+    <svg viewBox={layer.viewBox} aria-hidden="true">
+      {regions.map((region) => (
+        <path
+          d={paths.get(region.id)}
+          class:list={['region', { active: region.id === defaultRegion }]}
+          data-region={region.id}
+        />
+      ))}
+      {layer.borders && <path class="region-borders" d={layer.borders} />}
+    </svg>
+  </div>
+
+  <div class="panel">
+    {regions.map((region) => (
+      <button
+        type="button"
+        data-region={region.id}
+        aria-pressed={region.id === defaultRegion ? 'true' : 'false'}
+      >
+        {region.label}
+      </button>
+    ))}
+    {regions.map((region) => (
+      <p data-region-panel={region.id} hidden={region.id !== defaultRegion}>
+        {region.description ?? region.label}
+      </p>
+    ))}
+  </div>
+</div>
+
+<script>
+  // Event delegation on document: runs once, survives Astro View Transitions.
+  const regionOf = (target: EventTarget | null) =>
+    target instanceof Element ? target.closest<HTMLElement>('[data-region]') : null
+
+  document.addEventListener('click', (event) => {
+    const el = regionOf(event.target)
+    const map = el?.closest('[data-globe-map]')
+    if (!el || !map) return
+    const id = el.dataset.region
+    map.querySelectorAll<HTMLElement>('[data-region]').forEach((node) => {
+      const on = node.dataset.region === id
+      if (node.tagName === 'BUTTON') node.setAttribute('aria-pressed', String(on))
+      else node.classList.toggle('active', on)
+    })
+    map.querySelectorAll<HTMLElement>('[data-region-panel]').forEach((panel) => {
+      panel.hidden = panel.dataset.regionPanel !== id
+    })
+  })
+
+  const hover = (event: Event, on: boolean) => {
+    const el = regionOf(event.target)
+    const map = el?.closest('[data-globe-map]')
+    if (!el || !map) return
+    map
+      .querySelectorAll(`[data-region="${el.dataset.region}"]`)
+      .forEach((node) => node.classList.toggle('is-hover', on))
+  }
+  document.addEventListener('pointerover', (event) => hover(event, true))
+  document.addEventListener('pointerout', (event) => hover(event, false))
+</script>
+
+<style>
+  .globe-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .globe {
+    position: relative;
+  }
+
+  .globe img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .globe svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .region {
+    fill: var(--globe-region, rgba(220, 60, 60, 0.15));
+    pointer-events: all;
+    cursor: pointer;
+    transition: fill 150ms ease;
+  }
+
+  .region:hover,
+  .region.is-hover {
+    fill: var(--globe-region-hover, rgba(220, 60, 60, 0.35));
+  }
+
+  .region.active {
+    fill: var(--globe-region-active, rgba(220, 60, 60, 0.6));
+  }
+
+  .region-borders {
+    fill: none;
+    stroke: var(--globe-region-border, rgba(255, 255, 255, 0.08));
+    pointer-events: none;
+  }
+
+  @media (max-width: 700px) {
+    .globe-map {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .region {
+      transition: none;
+    }
+  }
+</style>

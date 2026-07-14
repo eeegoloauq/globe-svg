@@ -1,0 +1,50 @@
+{
+  "name": "globe-svg",
+  "version": "0.1.0",
+  "description": "Build-time CLI that renders an orthographic globe with highlighted regions into a crisp static SVG — zero runtime JavaScript, no mapping libraries on your page.",
+  "keywords": [
+    "globe",
+    "svg",
+    "map",
+    "orthographic",
+    "natural-earth",
+    "topojson",
+    "d3-geo",
+    "coverage-map",
+    "static",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "eeegoloauq",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eeegoloauq/globe-svg.git"
+  },
+  "bugs": "https://github.com/eeegoloauq/globe-svg/issues",
+  "homepage": "https://github.com/eeegoloauq/globe-svg#readme",
+  "type": "module",
+  "bin": {
+    "globe-svg": "src/cli.js"
+  },
+  "exports": {
+    ".": "./src/generate.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "examples": "node src/cli.js --config examples/russia-districts/globe.config.json && node src/cli.js --config examples/world-coverage/globe.config.json"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "topojson-client": "^3.1.0",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3"
+  }
+}

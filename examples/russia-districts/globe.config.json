@@ -1,0 +1,42 @@
+{
+  "center": [97, 64],
+  "detail": 0.08,
+  "regions": {
+    "source": "ne-admin1-50m",
+    "key": "iso_3166_2",
+    "groups": [
+      {
+        "id": "central",
+        "codes": ["RU-BEL", "RU-BRY", "RU-IVA", "RU-KLU", "RU-KOS", "RU-KRS", "RU-LIP", "RU-MOS", "RU-MOW", "RU-ORL", "RU-RYA", "RU-SMO", "RU-TAM", "RU-TVE", "RU-TUL", "RU-VLA", "RU-VOR", "RU-YAR"]
+      },
+      {
+        "id": "northwestern",
+        "codes": ["RU-ARK", "RU-KGD", "RU-KO", "RU-KR", "RU-LEN", "RU-MUR", "RU-NEN", "RU-NGR", "RU-PSK", "RU-SPE", "RU-VLG"]
+      },
+      {
+        "id": "southern",
+        "codes": ["RU-AD", "RU-AST", "RU-KDA", "RU-KL", "RU-ROS", "RU-VGG"]
+      },
+      {
+        "id": "north-caucasian",
+        "codes": ["RU-CE", "RU-DA", "RU-IN", "RU-KB", "RU-KC", "RU-SE", "RU-STA"]
+      },
+      {
+        "id": "volga",
+        "codes": ["RU-BA", "RU-CU", "RU-KIR", "RU-ME", "RU-MO", "RU-NIZ", "RU-ORE", "RU-PER", "RU-PNZ", "RU-SAM", "RU-SAR", "RU-TA", "RU-UD", "RU-ULY"]
+      },
+      {
+        "id": "ural",
+        "codes": ["RU-CHE", "RU-KGN", "RU-KHM", "RU-SVE", "RU-TYU", "RU-YAN"]
+      },
+      {
+        "id": "siberian",
+        "codes": ["RU-AL", "RU-ALT", "RU-IRK", "RU-KEM", "RU-KK", "RU-KYA", "RU-NVS", "RU-OMS", "RU-TOM", "RU-TY"]
+      },
+      {
+        "id": "far-eastern",
+        "codes": ["RU-AMU", "RU-BU", "RU-CHU", "RU-KAM", "RU-KHA", "RU-MAG", "RU-PRI", "RU-SA", "RU-SAK", "RU-YEV", "RU-ZAB"]
+      }
+    ]
+  }
+}
