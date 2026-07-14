@@ -25,7 +25,8 @@ export const DEFAULTS = {
   //   key: '<feature property holding the code>',
   //   groups: [{ id: 'my-region', codes: ['RU-MOW', ...] }] }
   regions: null,
-  // Override backdrop datasets (file paths or URLs); used for tests/pinning.
+  // Override the backdrop dataset (admin-0-like GeoJSON FeatureCollection):
+  // { backdrop: <path | URL | { path } | { url }> }. Used for tests/pinning.
   sources: {},
   output: {
     dir: '.',

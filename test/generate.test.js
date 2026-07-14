@@ -8,9 +8,10 @@ const FIXTURES = new URL('./fixtures/', import.meta.url).pathname
 const baseConfig = {
   center: [20, 20],
   detail: 1,
+  // The same two-square FeatureCollection serves as backdrop (land = merge,
+  // borders = shared edge) and as the region source.
   sources: {
-    land: 'land.json',
-    countries: 'countries.json',
+    backdrop: 'regions.geojson',
   },
   regions: {
     source: 'regions.geojson',
@@ -50,7 +51,7 @@ test('warns about codes missing from the source', async () => {
 
 test('skips the region layer when "regions" is absent', async () => {
   const { layer } = await generate(
-    { center: [20, 20], detail: 1, sources: baseConfig.sources },
+    { center: [20, 20], detail: 1, sources: { backdrop: 'regions.geojson' } },
     { baseDir: FIXTURES, quiet: true }
   )
   assert.equal(layer, null)

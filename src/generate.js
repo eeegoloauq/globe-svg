@@ -6,7 +6,7 @@
  */
 
 import { geoOrthographic, geoPath, geoGraticule10 } from 'd3-geo'
-import { feature, merge, mesh } from 'topojson-client'
+import { merge, mesh } from 'topojson-client'
 import { topology } from 'topojson-server'
 import { presimplify, simplify, quantile } from 'topojson-simplify'
 import { resolveConfig } from './config.js'
@@ -35,10 +35,13 @@ export async function generate(userConfig, { baseDir = '.', quiet = false } = {}
   const warnings = []
   const load = (ref) => loadDataset(ref, { baseDir, quiet })
 
-  const [landTopo, countriesTopo] = await Promise.all([
-    load(config.sources.land ?? 'land'),
-    load(config.sources.countries ?? 'countries'),
-  ])
+  // Land and country borders come from ONE admin-0 topology: land is the merge
+  // of all country polygons, borders are the arcs shared by two different
+  // countries — so the two backdrop layers align exactly by construction.
+  const backdropGeo = await load(config.sources.backdrop ?? 'ne-admin0-50m')
+  if (backdropGeo.type !== 'FeatureCollection') {
+    throw new Error('Backdrop source must be a GeoJSON FeatureCollection (admin-0-like)')
+  }
 
   const radius = config.size / 2 - config.margin
   const half = config.size / 2
@@ -51,10 +54,9 @@ export async function generate(userConfig, { baseDir = '.', quiet = false } = {}
   const draw = (geometry) => (geometry && pathOf(geometry)) || ''
 
   // --- Backdrop ---
-  const land = simplified(landTopo, config.detail)
-  const countries = simplified(countriesTopo, config.detail)
-  const dLand = draw(feature(land, land.objects.land))
-  const dBorders = draw(mesh(countries, countries.objects.countries, (a, b) => a !== b))
+  const backdrop = simplified(topology({ units: backdropGeo }, 1e5), config.detail)
+  const dLand = draw(merge(backdrop, backdrop.objects.units.geometries))
+  const dBorders = draw(mesh(backdrop, backdrop.objects.units, (a, b) => a !== b))
   const dGraticule = config.graticule ? draw(geoGraticule10()) : ''
 
   const c = config.colors
