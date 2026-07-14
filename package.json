@@ -1,6 +1,6 @@
 {
   "name": "globe-svg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Build-time CLI that renders an orthographic globe with highlighted regions into a crisp static SVG — zero runtime JavaScript, no mapping libraries on your page.",
   "keywords": [
     "globe",
