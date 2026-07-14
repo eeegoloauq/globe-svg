@@ -125,11 +125,28 @@ Disputed territories are rendered exactly as Natural Earth ships them (de-facto
 policy). If you need different boundaries, point `regions.source` / `sources` at your
 own GeoJSON.
 
+## Dependencies
+
+Four, all build-time, none reach the browser — the full installed tree is
+7 packages / ~1.4 MB:
+
+- [`d3-geo`](https://github.com/d3/d3-geo) — the hard part: spherical clipping
+  at the horizon and adaptive resampling of great-circle arcs. The forward
+  orthographic projection is ten lines; cutting polygons at the edge of the
+  visible hemisphere correctly is not.
+- [`topojson-server` / `topojson-client` / `topojson-simplify`](https://github.com/topojson) —
+  shared-arc topology, which is what makes merged groups seamless, group
+  borders coastline-free, and simplification consistent along shared edges.
+
+These libraries see few releases because they are *finished*, not abandoned:
+projection math and topology algorithms don't rot the way data does (which is
+exactly why the data side is pinned to a Natural Earth release instead).
+
 ## Scope
 
 Orthographic projection, static output — by design. Rotation, zoom and pan are
 explicitly out of scope: if the globe must move, you want a runtime library
-(d3-geo, globe.gl), not this tool.
+(d3-geo in the browser, globe.gl), not this tool.
 
 ## License
 
