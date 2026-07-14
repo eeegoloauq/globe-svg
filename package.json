@@ -12,7 +12,9 @@
     "d3-geo",
     "coverage-map",
     "static",
-    "cli"
+    "cli",
+    "astro-component",
+    "withastro"
   ],
   "license": "MIT",
   "author": "eeegoloauq",
