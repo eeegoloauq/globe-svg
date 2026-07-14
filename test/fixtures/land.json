@@ -1,0 +1,9 @@
+{
+  "type": "Topology",
+  "objects": {
+    "land": { "type": "Polygon", "arcs": [[0]] }
+  },
+  "arcs": [
+    [[0, 0], [40, 0], [40, 40], [0, 40], [0, 0]]
+  ]
+}

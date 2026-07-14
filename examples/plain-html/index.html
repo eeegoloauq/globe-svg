@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- Minimal no-framework integration. Serve this directory together with
+     globe.svg + globe-regions.json produced by `npx globe-svg`. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>globe-svg — plain HTML example</title>
+  <style>
+    body { margin: 0; background: #161616; color: #eee; font: 16px/1.5 system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; }
+    .globe { position: relative; width: min(80vmin, 640px); }
+    .globe img { display: block; width: 100%; height: auto; }
+    .globe svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .region { fill: rgba(80, 160, 255, 0.2); pointer-events: all; cursor: pointer; transition: fill 150ms ease; }
+    .region:hover { fill: rgba(80, 160, 255, 0.45); }
+    .region.active { fill: rgba(80, 160, 255, 0.7); }
+    #label { text-align: center; min-height: 1.5em; opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="globe">
+      <img src="globe.svg" alt="" width="1000" height="1000" />
+      <svg id="overlay"></svg>
+    </div>
+    <p id="label">Click a region</p>
+  </main>
+
+  <script type="module">
+    const layer = await (await fetch('globe-regions.json')).json()
+    const overlay = document.getElementById('overlay')
+    const label = document.getElementById('label')
+
+    overlay.setAttribute('viewBox', layer.viewBox)
+    for (const region of layer.regions) {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      path.setAttribute('d', region.d)
+      path.setAttribute('class', 'region')
+      path.dataset.region = region.id
+      path.addEventListener('click', () => {
+        overlay.querySelectorAll('.region').forEach((p) => p.classList.toggle('active', p === path))
+        label.textContent = region.id
+      })
+      overlay.append(path)
+    }
+  </script>
+</body>
+</html>

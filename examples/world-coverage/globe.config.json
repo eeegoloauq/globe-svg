@@ -1,0 +1,13 @@
+{
+  "center": [10, 45],
+  "detail": 0.08,
+  "regions": {
+    "source": "ne-admin0-50m",
+    "key": "ADM0_A3",
+    "groups": [
+      { "id": "dach", "codes": ["DEU", "AUT", "CHE"] },
+      { "id": "nordics", "codes": ["NOR", "SWE", "FIN", "DNK"] },
+      { "id": "iberia", "codes": ["ESP", "PRT"] }
+    ]
+  }
+}
