@@ -1,0 +1,22 @@
+# The pre-merge check, and the only thing this repository asks of the local
+# runner: pull requests live in Forgejo, so the gate has to be here. Everything
+# after the merge — main, tags, releases, publishing — runs on GitHub, where the
+# copy of this file in .github/workflows does the same work for free.
+#
+# NB: because this directory exists, Forgejo ignores .github/workflows entirely.
+name: CI
+
+on:
+  pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
