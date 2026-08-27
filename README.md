@@ -2,8 +2,7 @@
 
 Render an orthographic globe with highlighted regions into a **static SVG** — at build
 time, not in the browser. Your page ships one cacheable image plus, optionally, a small
-JSON of region outlines for hover/click interactivity. No mapping library, no tiles,
-zero runtime JavaScript required.
+JSON of region outlines for hover/click interactivity.
 
 <p align="center">
   <img src="examples/russia-districts/preview.svg" alt="Globe centered on Russia with federal districts highlighted" width="420">
@@ -11,7 +10,6 @@ zero runtime JavaScript required.
 </p>
 
 Built for "we operate here" blocks: coverage maps, dealer networks, office locations.
-That picture only changes when your business does — so render it once, at build time.
 
 ## Quick start
 
@@ -41,8 +39,8 @@ This writes two artifacts next to the config:
 | `globe.svg` | Self-contained backdrop: ocean disc, graticule, land, country borders | `<img src>` — one request, cached for the whole site |
 | `globe-regions.json` | `{ viewBox, borders, regions: [{ id, d }] }` | Inline the paths in an `<svg>` overlay for interactivity |
 
-Both are computed with the **same projection and viewBox**, so stacking the overlay on
-the image lines up pixel-perfectly:
+Both are computed with the **same projection and viewBox**, so the overlay lines up
+with the image:
 
 ```html
 <div style="position: relative">
@@ -64,10 +62,10 @@ const { svg, layer, warnings } = await generate(config)
 ## Why not a mapping library?
 
 Runtime globes and vector maps (Leaflet, MapLibre, amCharts, globe.gl, jsvectormap)
-cost 50–300 KB of JavaScript, run projection math on your users' devices, and most
-of them only offer flat projections anyway. A static coverage map needs none of that:
-the SVG here is ~80 KB (≈25 KB gzipped), crisp on any display, and the optional
-interactive layer is a JSON of path strings — ~30 lines of your own vanilla JS.
+cost 50–300 KB of JavaScript and run the projection math on your users' devices; most
+of them only offer flat projections anyway. The SVG here is ~80 KB (≈25 KB gzipped),
+and the optional interactive layer is a JSON of path strings — about 30 lines of your
+own JavaScript.
 
 ## Config reference
 
@@ -130,17 +128,12 @@ own GeoJSON.
 Four, all build-time, none reach the browser — the full installed tree is
 7 packages / ~1.4 MB:
 
-- [`d3-geo`](https://github.com/d3/d3-geo) — the hard part: spherical clipping
-  at the horizon and adaptive resampling of great-circle arcs. The forward
-  orthographic projection is ten lines; cutting polygons at the edge of the
-  visible hemisphere correctly is not.
+- [`d3-geo`](https://github.com/d3/d3-geo) — spherical clipping at the horizon
+  and adaptive resampling of great-circle arcs, which is the part that is hard
+  to get right.
 - [`topojson-server` / `topojson-client` / `topojson-simplify`](https://github.com/topojson) —
   shared-arc topology, which is what makes merged groups seamless, group
   borders coastline-free, and simplification consistent along shared edges.
-
-These libraries see few releases because they are *finished*, not abandoned:
-projection math and topology algorithms don't rot the way data does (which is
-exactly why the data side is pinned to a Natural Earth release instead).
 
 ## Scope
 
