@@ -32,7 +32,7 @@ npx globe-svg --config globe.config.json
 }
 ```
 
-This writes two artifacts next to the config:
+This writes `globe.svg` next to the config and, when a region layer exists, `globe-regions.json`:
 
 | File | What it is | How to use it |
 | --- | --- | --- |
