@@ -1,13 +1,20 @@
+<div align="center">
+
 # globe-svg
+
+**Orthographic globes as static SVG, rendered at build time.**
+
+[![npm version](https://img.shields.io/npm/v/globe-svg)](https://www.npmjs.com/package/globe-svg)
+[![license](https://img.shields.io/npm/l/globe-svg)](./LICENSE)
 
 Render an orthographic globe with highlighted regions into a **static SVG** — at build
 time, not in the browser. Your page ships one cacheable image plus, optionally, a small
 JSON of region outlines for hover/click interactivity.
 
-<p align="center">
-  <img src="examples/russia-districts/preview.svg" alt="Globe centered on Russia with federal districts highlighted" width="420">
-  <img src="examples/world-coverage/preview.svg" alt="Globe centered on Europe with country groups highlighted" width="420">
-</p>
+<img src="examples/russia-districts/preview.svg" alt="Globe centered on Russia with federal districts highlighted" width="420">
+<img src="examples/world-coverage/preview.svg" alt="Globe centered on Europe with country groups highlighted" width="420">
+
+</div>
 
 Built for "we operate here" blocks: coverage maps, dealer networks, office locations.
 
