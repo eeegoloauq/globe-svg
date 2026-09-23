@@ -1,24 +1,21 @@
-<div align="center">
-
 # globe-svg
 
-**Orthographic globes as static SVG, rendered at build time.**
+Renders an orthographic globe with highlighted regions into a static SVG at build time. The page
+ships one cacheable image and, optionally, a small JSON of region outlines for hover and click.
+Made for coverage maps, dealer networks and office locations.
 
 [![npm version](https://img.shields.io/npm/v/globe-svg)](https://www.npmjs.com/package/globe-svg)
+[![CI](https://github.com/eeegoloauq/globe-svg/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/eeegoloauq/globe-svg/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/globe-svg)](./LICENSE)
 
-Render an orthographic globe with highlighted regions into a **static SVG** — at build
-time, not in the browser. Your page ships one cacheable image plus, optionally, a small
-JSON of region outlines for hover/click interactivity.
-
-<img src="examples/russia-districts/preview.svg" alt="Globe centered on Russia with federal districts highlighted" width="420">
-<img src="examples/world-coverage/preview.svg" alt="Globe centered on Europe with country groups highlighted" width="420">
-
-</div>
-
-Built for "we operate here" blocks: coverage maps, dealer networks, office locations.
+<p>
+  <img src="examples/russia-districts/preview.svg" alt="Globe centered on Russia with federal districts highlighted" width="420">
+  <img src="examples/world-coverage/preview.svg" alt="Globe centered on Europe with country groups highlighted" width="420">
+</p>
 
 ## Quick start
+
+Requires Node.js 20 or newer.
 
 ```bash
 npx globe-svg --config globe.config.json
@@ -43,11 +40,10 @@ This writes `globe.svg` next to the config and, when a region layer exists, `glo
 
 | File | What it is | How to use it |
 | --- | --- | --- |
-| `globe.svg` | Self-contained backdrop: ocean disc, graticule, land, country borders | `<img src>` — one request, cached for the whole site |
+| `globe.svg` | Self-contained backdrop: ocean disc, graticule, land, country borders | `<img src>`, cached for the whole site |
 | `globe-regions.json` | `{ viewBox, borders, regions: [{ id, d }] }` | Inline the paths in an `<svg>` overlay for interactivity |
 
-Both are computed with the **same projection and viewBox**, so the overlay lines up
-with the image:
+Both use the same projection and viewBox, so the overlay lines up with the image:
 
 ```html
 <div style="position: relative">
@@ -66,18 +62,16 @@ import { generate } from 'globe-svg'
 const { svg, layer, warnings } = await generate(config)
 ```
 
-## Why not a mapping library?
+## Compared with a mapping library
 
-Runtime globes and vector maps (Leaflet, MapLibre, amCharts, globe.gl, jsvectormap)
-cost 50–300 KB of JavaScript and run the projection math on your users' devices; most
-of them only offer flat projections anyway. The SVG here is ~80 KB (≈25 KB gzipped),
-and the optional interactive layer is a JSON of path strings — about 30 lines of your
-own JavaScript.
+Runtime globes and vector maps (Leaflet, MapLibre, amCharts, globe.gl, jsvectormap) add 50–300 KB
+of JavaScript and project on the user's device; most offer only flat projections. The example SVGs
+here are about 80 KB, 35 KB gzipped. The interactive layer is a JSON of path strings and about 30
+lines of your own JavaScript.
 
 ## Config reference
 
-Everything is optional except `center` being something other than `[0, 0]` if you
-care about the framing.
+Every key is optional. Set `center` to frame the globe on your area.
 
 | Key | Default | Meaning |
 | --- | --- | --- |
@@ -102,14 +96,14 @@ care about the framing.
 }
 ```
 
-- `source` — `"ne-admin0-50m"` (countries), `"ne-admin1-50m"` (states/provinces of the
+- `source`: `"ne-admin0-50m"` (countries), `"ne-admin1-50m"` (states/provinces of the
   ~10 largest countries), a URL, or a local GeoJSON FeatureCollection path.
-- `key` — feature property holding the code. Use `ADM0_A3` for countries (Natural
-  Earth leaves `ISO_A3` as `-99` for France, Norway and a few others) and
-  `iso_3166_2` for admin-1. Lookup is case-insensitive across property casings.
-- `groups` — each becomes one merged `<path>` in the layer. Inner boundaries between
-  subdivisions of the same group disappear; `layer.borders` contains only the lines
-  **between different groups** (no coastlines), ready for a subtle stroke.
+- `key`: the feature property holding the code. Use `ADM0_A3` for countries (Natural Earth leaves
+  `ISO_A3` as `-99` for France, Norway and a few others) and `iso_3166_2` for admin-1. The key is
+  also tried in upper and lower case, since Natural Earth releases differ.
+- `groups`: each becomes one merged `<path>` in the layer, without the inner boundaries of its
+  subdivisions. `layer.borders` holds only the lines between different groups, without
+  coastlines.
 
 Codes that match nothing produce a warning listing them; a group that matches nothing
 is an error.
@@ -117,36 +111,31 @@ is an error.
 ## Data & caching
 
 All geometry comes from [Natural Earth](https://www.naturalearthdata.com/)
-(public domain) at 1:50m scale, **pinned to release v5.1.2** for reproducible
-output. Land and country borders are both derived from the single admin-0
-dataset (land is the union of all countries), so the backdrop layers align
-exactly by construction, and the region layer shares the same scale and version.
+(public domain) at 1:50m scale, pinned to release v5.1.2 for reproducible output. Land and
+country borders both come from the admin-0 dataset (land is the union of all countries), so the
+backdrop layers align, and the region layer uses the same scale and release.
 
-Files download on first run into `~/.cache/globe-svg` (override with
-`GLOBE_SVG_CACHE`) and are reused afterwards, so CI needs network only once per
-cache lifetime.
+Files are downloaded on the first run into `~/.cache/globe-svg` (override with
+`GLOBE_SVG_CACHE`) and reused after that.
 
-Disputed territories are rendered exactly as Natural Earth ships them (de-facto
-policy). If you need different boundaries, point `regions.source` / `sources` at your
-own GeoJSON.
+Disputed territories are drawn as Natural Earth ships them (de facto boundaries). For different
+boundaries, point `regions.source` or `sources` at your own GeoJSON.
 
 ## Dependencies
 
-Four, all build-time, none reach the browser — the full installed tree is
-7 packages / ~1.4 MB:
+Four, all build-time; nothing reaches the browser. The installed tree is 7 packages, about
+1.4 MB.
 
-- [`d3-geo`](https://github.com/d3/d3-geo) — spherical clipping at the horizon
-  and adaptive resampling of great-circle arcs, which is the part that is hard
-  to get right.
-- [`topojson-server` / `topojson-client` / `topojson-simplify`](https://github.com/topojson) —
-  shared-arc topology, which is what makes merged groups seamless, group
-  borders coastline-free, and simplification consistent along shared edges.
+- [`d3-geo`](https://github.com/d3/d3-geo): clipping at the horizon and resampling of great-circle
+  arcs.
+- [`topojson-server` / `topojson-client` / `topojson-simplify`](https://github.com/topojson):
+  shared-arc topology for seamless merged groups, borders without coastlines, and consistent
+  simplification along shared edges.
 
 ## Scope
 
-Orthographic projection, static output — by design. Rotation, zoom and pan are
-explicitly out of scope: if the globe must move, you want a runtime library
-(d3-geo in the browser, globe.gl), not this tool.
+Orthographic projection and static output only. For rotation, zoom or pan, use a runtime library
+such as d3-geo in the browser or globe.gl.
 
 ## License
 
